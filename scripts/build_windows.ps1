@@ -12,6 +12,5 @@ cmake .. -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmak
 
 if ($Package) {
     Write-Host "Packaging enabled. Running installer script..."
-    # Call installer script (stub)
-    # .\scripts\installer_windows.ps1
+    .\scripts\installer_windows.ps1
 }
