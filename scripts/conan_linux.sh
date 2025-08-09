@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Usage: Run from project root or scripts folder
+# Checks for conan, creates build dir, runs conan install
+
 set -e
 PROJECT_ROOT="$(dirname "$0")/.."
 cd "$PROJECT_ROOT"

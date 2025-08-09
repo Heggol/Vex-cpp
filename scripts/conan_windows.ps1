@@ -1,5 +1,3 @@
-
-# conan_install_windows.ps1
 # Usage: Run from project root or scripts folder
 # Checks for conan, creates build dir, runs conan install
 
@@ -8,14 +6,14 @@ param(
     [string]$BuildDir = "build"
 )
 
-function Check-Conan {
+function Test-Conan {
     if (-not (Get-Command conan -ErrorAction SilentlyContinue)) {
         Write-Error "Conan is not installed. Please install Conan before proceeding."
         exit 1
     }
 }
 
-Check-Conan
+Test-Conan
 
 Set-Location $ProjectRoot
 if (-not (Test-Path $BuildDir)) {
@@ -23,3 +21,5 @@ if (-not (Test-Path $BuildDir)) {
 }
 conan profile detect --force
 conan install . --output-folder=$BuildDir --build=missing
+
+Set-Location $ProjectRoot
