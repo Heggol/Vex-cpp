@@ -1,6 +1,3 @@
-# Usage: Run from project root or scripts folder
-# Checks for conan, creates build dir, runs conan install
-
 param(
     [string]$ProjectRoot = (Resolve-Path "$PSScriptRoot\.."),
     [string]$BuildDir = "build"
