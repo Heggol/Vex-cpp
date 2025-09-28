@@ -44,11 +44,16 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           cd build
-          cmake .. -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" -DCMAKE_BUILD_TYPE="Release" -- -j 3
+            cmake .. -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" -DCMAKE_BUILD_TYPE="Release"
         shell: bash
 
-      - name: Build
+      - name: Build (Windows)
+        if: matrix.os == 'windows-latest'
         run: cmake --build build --config Release
+
+      - name: Build (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: make -C build -j4
 
       - name: Run tests
         run: ctest --test-dir build --output-on-failure --build-config Release
