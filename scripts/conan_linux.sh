@@ -18,4 +18,4 @@ fi
 conan profile detect --force
 conan install . --output-folder=build --build=missing
 
-echo "Conan dependencies installed successfully. You can now build with CMake using the build script `scripts/build_linux.sh`."
+echo "Conan dependencies installed successfully. You can now build with CMake using the build script 'scripts/build_linux.sh'."

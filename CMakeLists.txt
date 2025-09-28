@@ -3,13 +3,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(vex VERSION 0.1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(vex src/main.cpp src/commands/add.cpp src/commands/init.cpp src/commands/install.cpp src/commands/remove.cpp src/commands/help.cpp src/lockfile.cpp src/package.cpp src/utils/utils.cpp)
+add_executable(vex src/main.cpp src/commands/add.cpp src/commands/init.cpp src/commands/install.cpp src/commands/remove.cpp src/commands/help.cpp src/lockfile.cpp src/package.cpp src/arguments.cpp src/utils/utils.cpp)
 
 find_package(ZLIB REQUIRED)
-find_package(CLI11 REQUIRED)
 find_package(httplib REQUIRED)
 find_package(OpenSSL REQUIRED)
 if (OPENSSL_FOUND)
@@ -17,7 +16,7 @@ if (OPENSSL_FOUND)
 endif()
 find_package(nlohmann_json REQUIRED)
 find_package(LibArchive REQUIRED)
-target_link_libraries(vex PRIVATE ZLIB::ZLIB CLI11::CLI11 httplib::httplib nlohmann_json::nlohmann_json LibArchive::LibArchive)
+target_link_libraries(vex PRIVATE ZLIB::ZLIB httplib::httplib nlohmann_json::nlohmann_json LibArchive::LibArchive)
 target_link_libraries(vex PUBLIC
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::Crypto>)
@@ -46,9 +45,10 @@ add_executable(tests
     src/commands/help.cpp
     src/lockfile.cpp
     src/package.cpp
+    src/arguments.cpp
     src/utils/utils.cpp
 )
-target_link_libraries(tests PRIVATE GTest::gtest_main LibArchive::LibArchive CLI11::CLI11 httplib::httplib nlohmann_json::nlohmann_json ZLIB::ZLIB)
+target_link_libraries(tests PRIVATE GTest::gtest_main LibArchive::LibArchive httplib::httplib nlohmann_json::nlohmann_json ZLIB::ZLIB)
 target_link_libraries(tests PUBLIC
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::Crypto>)
