@@ -7,7 +7,10 @@ on:
 
 jobs:
   build-and-upload:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
 
@@ -18,7 +21,7 @@ jobs:
         id: cache-conan
         uses: actions/cache@v4
         with:
-          path: ~/.conan2
+          path: ${{ matrix.os == 'windows-latest' && 'C:\\Users\\runneradmin\\.conan2' || '~/.conan2' }}
           key: ${{ runner.os }}-conan-${{ hashFiles('conanfile.txt') }}
 
       - name: Create default Conan profile
@@ -28,25 +31,38 @@ jobs:
       - name: Install dependencies
         run: conan install . --output-folder=build --build=missing -s build_type=Release
 
-      - name: Configure CMake
+      - name: Configure CMake (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           cd build
           cmake .. -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" -DCMAKE_BUILD_TYPE="Release"
         shell: bash
 
-      - name: Build vex target
+      - name: Configure CMake (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd build
+          cmake .. -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" -DCMAKE_BUILD_TYPE="Release"
+        shell: bash
+
+      - name: Build vex target (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: make -C build vex -j4
 
-      - name: Upload vex executable to release (Linux)
-        if: runner.os == 'Linux'
+      - name: Build vex target (Windows)
+        if: matrix.os == 'windows-latest'
+        run: cmake --build build --config Release --target vex --parallel 4
+
+      - name: Upload executable (Linux)
+        if: matrix.os == 'ubuntu-latest'
         uses: softprops/action-gh-release@v2
         with:
           files: build/vex
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload vex executable to release (Windows)
-        if: runner.os == 'Windows'
+      - name: Upload executable (Windows)
+        if: matrix.os == 'windows-latest'
         uses: softprops/action-gh-release@v2
         with:
           files: build/Release/vex.exe
